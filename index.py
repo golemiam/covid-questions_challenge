@@ -1,6 +1,7 @@
 import csv
 import pandas as pd
 
+
 def main():
     """
     Main program for addressing challenge questions
@@ -25,6 +26,9 @@ def run_project():
         pass
     elif question_choice == "4":
         pass
+
+
+
 
 def read_panda_file_question_1():
     """
@@ -111,6 +115,7 @@ def read_panda_file_question_2():
     """
 
     covid_df = pd.read_csv('COVID_19_Nursing_Home_Data_01_22_2023.csv')
+    # Reads the csv file
     covid_simple_titles = covid_df.rename(columns={
         'Week Ending': 'W_End',
         'Federal Provider Number': 'FP_num',
@@ -131,15 +136,19 @@ def read_panda_file_question_2():
         'Percentage of Current Healthcare Personnel Up to Date with COVID-19 Vaccines': 'Percentage_7',
         'Percentage of Current Healthcare Personnel with a Completed Vaccination Up to Date with COVID-19 Vaccines': 'Percentage_8'
     })
+    # The above makes the column names manageable.
 
 
     covid_count = covid_simple_titles['covid_weekly_count']
-    s = pd.Series(covid_count)
+    # Isolates a single column
 
 
     provider_list = []
+    # Creates an empty list for providers for later use
     provider = ''
+    # creates an empty variable for a provider for later use
     count_list = []
+    # creates an empty list for counts for later use
     count = 0
     max_count = 0
     for row, counter in zip( covid_simple_titles['P_name'], covid_simple_titles['covid_weekly_count']):
@@ -156,6 +165,8 @@ def read_panda_file_question_2():
                 max_count = max(count_list)
             provider = row
             provider_list.append(provider)
+            count_list = [0]
+
 
 if __name__ == "__main__":
     main()
