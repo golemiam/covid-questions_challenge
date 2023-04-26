@@ -1,6 +1,5 @@
 import csv
 import pandas as pd
-#import ipython as ipy
 
 def main():
     """
