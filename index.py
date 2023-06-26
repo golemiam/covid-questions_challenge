@@ -74,12 +74,19 @@ def read_panda_file_question_1():
         mask = covid_df["Provider Name"] == "THE LODGE OF SAGINAW HEALTH AND WELLNESS"
         #print(covid_df[mask])
 
+        merger_df = provider_df.merge(right=covid_df, how="left", left_on="our affilitied federal provider numbers", right_on="Federal Provider Number")
+        #merger_df = covid_df.merge(right=provider_df, how="left", left_on="our affilitied federal provider numbers")
+
+
+        print(merger_df)
+
         #covid_df["Provider Numbers"] = provider_df
         #print(covid_df["Provider Numbers"].head(3))
         #mask = covid_df["Federal Provider Number"].isin(provider_numbers)
         #print(mask.head(3))
         unstacked_df = combo_df.unstack()
-        print(unstacked_df.head(40000000))
+        #print(unstacked_df.head(40000000))
+
 
         for row, covid_df['Federal Provider Number'] in zip(provider_df, covid_df):
             provider_df = covid_df['Provider Name']
