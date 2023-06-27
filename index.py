@@ -76,30 +76,40 @@ def read_panda_file_question_1():
 
         merger_df = provider_df.merge(right=covid_df, how="left", left_on="our affilitied federal provider numbers", right_on="Federal Provider Number")
         #merger_df = covid_df.merge(right=provider_df, how="left", left_on="our affilitied federal provider numbers")
+        covid_df = merger_df
+
+        #print(merger_df)
+        dup_dropped_df = merger_df.drop_duplicates(subset= ["Provider Name"])
+        #print(dup_dropped_df)
+        #print(merger_df["Provider Name"].nunique)
+        #merger_dup_mask = merger_df["Provider Name"].duplicated(keep= "first")
+        #print(merger_df[merger_dup_mask])
+        #unique_merger_vals_list = [merger_dup_mask != True]
+        #ensign_facil_names = ~unique_merger_vals_list.duplicated(keep=False)
+        #print(unique_merger_vals_list[ensign_facil_names])
 
 
-        print(merger_df)
 
         #covid_df["Provider Numbers"] = provider_df
         #print(covid_df["Provider Numbers"].head(3))
         #mask = covid_df["Federal Provider Number"].isin(provider_numbers)
         #print(mask.head(3))
-        unstacked_df = combo_df.unstack()
+        #unstacked_df = combo_df.unstack()
         #print(unstacked_df.head(40000000))
 
 
-        for row, covid_df['Federal Provider Number'] in zip(provider_df, covid_df):
-            provider_df = covid_df['Provider Name']
-        print(provider_df.info())
+        #for row, covid_df['Federal Provider Number'] in zip(provider_df, covid_df):
+        #    provider_df = covid_df['Provider Name']
+        #print(provider_df.info())
         provider_set = provider_df
         #print(provider_df[provider_set])
-        repeated_list = []
-        for row in zip(provider_df, provider_set):
-            if provider_df[row].is_unique():
-                provider_set.append(row[1])
-                print(1)
-            else:
-                print("nope")
+        #repeated_list = []
+        #for row in zip(provider_df, provider_set):
+        #    if provider_df[row].is_unique():
+        #        provider_set.append(row[1])
+        #        print(1)
+        #    else:
+        #        print("nope")
 
     #print(provider_set)
 
