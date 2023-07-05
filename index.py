@@ -1,5 +1,7 @@
 import csv
 import pandas as pd
+#from pandas_datareader import data
+#from pandas.tseries import offsets
 
 
 def main():
@@ -26,6 +28,7 @@ def run_project():
         read_panda_file_question_3()
     elif question_choice == "4":
         pass
+    #save_to_file()
 
 
 
@@ -45,73 +48,57 @@ def read_panda_file_question_1():
        Which facility would you like information for? '1' for everything, '2' for everything at ensign. For 
        everything else name the facility you would like listed.
        """)
+    #mask = provider_df["our affilitied federal provider numbers"].isin([int(facility_choice)])
+    #print(mask)
+    #print(provider_df[mask])
+    #skipper_df = pd.DataFrame({"our affilitied federal provider numbers":[facility_choice]})
+
+    try:
+        int(facility_choice[0])
+        print("Yes it is")
+        facility_choice_other = 0
+    except:
+        print("No it isn't")
+        facility_choice_other = facility_choice.upper()
+        facility_choice = 3
+
+    a = [f"{str(facility_choice)}", provider_df]
+    #print(covid_df["Provider Name"])
+    #print(covid_df[covid_df["Provider Name"].str.lower() == facility_choice_other.lower()])
     if facility_choice == '1'.lower():
         pass
     elif facility_choice == '2'.lower():
-        provider_df = pd.read_csv("Our_Provider_numbers.csv")
-        provider_simple_title = provider_df.rename(columns={
-            "our affilitied federal provider numbers": "Provider Numbers"
-        })
-        #print(provider_df.head(3))
-
-
-        combo_df = pd.concat(objs= [covid_df, provider_simple_title])
-        #combo_df = combo_df.dropna(subset= ["Provider Numbers"])
-        #print(combo_df)
-        #print(combo_df.head(1))
-        #mask = combo_df["Federal Provider Number"].isin(combo_df["Provider Numbers"])
-        #print(combo_df[mask])
-        #print(provider_series.head(3))
-        provider_numbers = provider_simple_title["Provider Numbers"]
-        #print(provider_numbers.head(3))
-        provider_names = covid_df["Provider Name"]
-        covid_grouped = covid_df.groupby("Provider Name")
-        #print(covid_grouped.head(3))
-        provider_index_df = pd.read_csv("COVID_19_Nursing_Home_Data_01_22_2023.csv", index_col="Federal Provider Number")
-        #print(provider_index_df.head(3))
-        covid_grouped = provider_index_df.groupby("Provider Name")
-        #print(covid_grouped["Provider Name"].head(3))
-        mask = covid_df["Provider Name"] == "THE LODGE OF SAGINAW HEALTH AND WELLNESS"
-        #print(covid_df[mask])
-
         merger_df = provider_df.merge(right=covid_df, how="left", left_on="our affilitied federal provider numbers", right_on="Federal Provider Number")
-        #merger_df = covid_df.merge(right=provider_df, how="left", left_on="our affilitied federal provider numbers")
         covid_df = merger_df
 
-        #print(merger_df)
-        dup_dropped_df = merger_df.drop_duplicates(subset= ["Provider Name"])
-        #print(dup_dropped_df)
-        #print(merger_df["Provider Name"].nunique)
-        #merger_dup_mask = merger_df["Provider Name"].duplicated(keep= "first")
-        #print(merger_df[merger_dup_mask])
-        #unique_merger_vals_list = [merger_dup_mask != True]
-        #ensign_facil_names = ~unique_merger_vals_list.duplicated(keep=False)
-        #print(unique_merger_vals_list[ensign_facil_names])
+    elif facility_choice_other != 0:
+        print(covid_df[covid_df["Provider Name"].str.lower() == facility_choice_other.lower()])
+        providers = covid_df.groupby("Provider Name")
+        facility = providers.get_group(facility_choice_other)
+        covid_df = facility
+
+
+    elif f"{str(facility_choice)}" in a:
+        providers = covid_df.groupby("Federal Provider Number")
+        facility = providers.get_group(facility_choice)
+        print(facility.info())
+        print(covid_df.info())
+        facility_mix = pd.DataFrame({f'{facility["Provider Name"]}': range(len(facility))})
+        print(facility_mix)
+        facility.index = facility_mix.index
+        #facility.index = pd.RangeIndex.from_range(140)
+        #print(facility.index)
+        covid_df = facility
 
 
 
-        #covid_df["Provider Numbers"] = provider_df
-        #print(covid_df["Provider Numbers"].head(3))
-        #mask = covid_df["Federal Provider Number"].isin(provider_numbers)
-        #print(mask.head(3))
-        #unstacked_df = combo_df.unstack()
-        #print(unstacked_df.head(40000000))
 
-
-        #for row, covid_df['Federal Provider Number'] in zip(provider_df, covid_df):
-        #    provider_df = covid_df['Provider Name']
-        #print(provider_df.info())
-        provider_set = provider_df
-        #print(provider_df[provider_set])
-        #repeated_list = []
-        #for row in zip(provider_df, provider_set):
-        #    if provider_df[row].is_unique():
-        #        provider_set.append(row[1])
-        #        print(1)
-        #    else:
-        #        print("nope")
-
-    #print(provider_set)
+    elif f"{facility_choice_other.lower()}" in b:
+        providers = covid_df.groupby("Federal Name")
+        #print(covid_df["Federal Provider Number"])
+        facility = providers.get_group(facility_choice)
+        #print(facility)
+        covid_df = facility
 
     covid_simple_titles = covid_df.rename(columns= {
     'Week Ending': 'W_End', 
