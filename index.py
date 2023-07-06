@@ -28,8 +28,24 @@ def run_project():
         read_panda_file_question_3()
     elif question_choice == "4":
         pass
-    #save_to_file()
 
+
+def save_to_file(data):
+    out_file_choice = input("What would you like to name the file? ")
+    try:
+        with open(out_file_choice, "x") as out_file:
+            print(data, file= out_file)
+    except:
+        out_file_placer = "placer.txt"
+        with open(out_file_placer, "w") as out_file:
+            print(data, file= out_file)
+            print("""
+                You chose a file name that has already been taken, 
+            your data has been placed in placer.txt and will be 
+            overwritten when this program runs again. Either choose 
+            a new file name where you would like this saved, or view 
+            the data now before it gets removed. 
+            """)
 
 
 
@@ -48,10 +64,6 @@ def read_panda_file_question_1():
        Which facility would you like information for? '1' for everything, '2' for everything at ensign. For 
        everything else name the facility you would like listed.
        """)
-    #mask = provider_df["our affilitied federal provider numbers"].isin([int(facility_choice)])
-    #print(mask)
-    #print(provider_df[mask])
-    #skipper_df = pd.DataFrame({"our affilitied federal provider numbers":[facility_choice]})
 
     try:
         int(facility_choice[0])
@@ -61,15 +73,17 @@ def read_panda_file_question_1():
         print("No it isn't")
         facility_choice_other = facility_choice.upper()
         facility_choice = 3
-
-    a = [f"{str(facility_choice)}", provider_df]
-    #print(covid_df["Provider Name"])
-    #print(covid_df[covid_df["Provider Name"].str.lower() == facility_choice_other.lower()])
+    try:
+        a = [f"{(facility_choice)}", provider_df]
+        print(a)
+    except:
+        print("test")
     if facility_choice == '1'.lower():
         pass
     elif facility_choice == '2'.lower():
         merger_df = provider_df.merge(right=covid_df, how="left", left_on="our affilitied federal provider numbers", right_on="Federal Provider Number")
         covid_df = merger_df
+
 
     elif facility_choice_other != 0:
         print(covid_df[covid_df["Provider Name"].str.lower() == facility_choice_other.lower()])
@@ -81,26 +95,14 @@ def read_panda_file_question_1():
     elif f"{str(facility_choice)}" in a:
         providers = covid_df.groupby("Federal Provider Number")
         facility = providers.get_group(facility_choice)
-        print(facility.info())
-        print(covid_df.info())
-        facility_mix = pd.DataFrame({f'{facility["Provider Name"]}': range(len(facility))})
-        print(facility_mix)
+        facility_mix = pd.DataFrame({f'{facility["Provider Name"].values}': range(len(facility))})
+
         facility.index = facility_mix.index
-        #facility.index = pd.RangeIndex.from_range(140)
-        #print(facility.index)
+
         covid_df = facility
 
-
-
-
-    elif f"{facility_choice_other.lower()}" in b:
-        providers = covid_df.groupby("Federal Name")
-        #print(covid_df["Federal Provider Number"])
-        facility = providers.get_group(facility_choice)
-        #print(facility)
-        covid_df = facility
-
-    covid_simple_titles = covid_df.rename(columns= {
+    try:
+        covid_simple_titles = covid_df.rename(columns= {
     'Week Ending': 'W_End', 
     'Federal Provider Number': 'FP_num', 
     'Provider Name': 'P_name', 
@@ -121,7 +123,9 @@ def read_panda_file_question_1():
     'Percentage of Current Healthcare Personnel with a Completed Vaccination Up to Date with COVID-19 Vaccines': 'Percentage_8'
     })
     #Changes column names for easier calculations
-
+    except:
+        print("No simple titles")
+    print("Test for simple")
 
 
 
@@ -177,6 +181,8 @@ def read_panda_file_question_1():
         percent_a = covid_simple_titles[covid_simple_titles.Percentage_8 > 80]
         # Collects over 80 percent values for selection
         print(f"Week: {percent_a['W_End']} : Percent: {percent_a['Percentage_8']}")
+    data = percent_a
+    save_to_file(data)
 
 
 def read_panda_file_question_2():
@@ -211,7 +217,7 @@ def read_panda_file_question_2():
     })
     # The above makes the column names manageable.
 
-
+    max_count_list = []
 
     provider_list = []
     # Creates an empty list for providers for later use
@@ -238,7 +244,11 @@ def read_panda_file_question_2():
                 max_count = max(count_list)
             provider = row
             provider_list.append(provider)
+            max_count_list.append(max_count)
             count_list = [0]
+
+    data = [f"{provider_list}, {max_count_list}"]
+    save_to_file(data)
 
 def read_panda_file_question_3():
     bonus_df = pd.read_csv('bonus_challenge.csv')
