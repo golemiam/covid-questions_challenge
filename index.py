@@ -5,6 +5,7 @@ import selenium
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait as wait
+import numpy as np
 
 #from pandas_datareader import data
 #from pandas.tseries import offsets
@@ -36,7 +37,7 @@ def run_project():
     elif question_choice == "3":
         read_panda_file_question_3()
     elif question_choice == "4":
-        pass
+        read_panda_file_question_4()
 
 
 def opener():
@@ -99,6 +100,8 @@ def read_panda_file_question_1():
     Returns percentage values over 80% for the various percentage columns for healthcare personnel.
     """
     covid_df = pd.read_csv('COVID_19_Nursing_Home_Data_01_22_2023.csv')
+    # Reads the Nursing Home Data csv for use as a variable.
+
     provider_df = pd.read_csv('Our_Provider_numbers.csv')
     #converts csv to a variable for use.
 
@@ -106,42 +109,58 @@ def read_panda_file_question_1():
        Which facility would you like information for? '1' for everything, '2' for everything at ensign. For 
        everything else name the facility you would like listed.
        """)
+    # Creates a variable to hold user input for deciding how the user would like to sort the data.
 
     try:
         int(facility_choice[0])
-        print("Yes it is")
+        # Checks to see if facility choice is a number
         facility_choice_other = 0
+        # Sets the facility_choice_other variable to zero so it can be used for sorting below.
+
     except:
-        print("No it isn't")
         facility_choice_other = facility_choice.upper()
+        # Accepts string input from the user to compare to a facility name
         facility_choice = 3
+        # Sets the facility_choice_other to 3 for later sorting below
     try:
         a = [f"{(facility_choice)}", provider_df]
-        print(a)
+        # Groups the facility choice with the provider to check for similarity.
+
     except:
-        print("test")
+        print("That doesn't quite work")
+
     if facility_choice == '1'.lower():
         pass
+        # This allows for everything to be included
     elif facility_choice == '2'.lower():
         merger_df = provider_df.merge(right=covid_df, how="left", left_on="our affilitied federal provider numbers", right_on="Federal Provider Number")
-        covid_df = merger_df
+        # This selects only the facilities related to ensign.
 
+        covid_df = merger_df
+        # This is so that calculations below will be unhindered and will apply everything as normal to the ensign facilities.
 
     elif facility_choice_other != 0:
         print(covid_df[covid_df["Provider Name"].str.lower() == facility_choice_other.lower()])
+        # Isolates a single facility by string value (their name).
         providers = covid_df.groupby("Provider Name")
-        facility = providers.get_group(facility_choice_other)
-        covid_df = facility
+        # Groups Facilities together by name
+        facility_df = providers.get_group(facility_choice_other)
+        # Uses groupings to establish facility dataframe
+        covid_df = facility_df
+        # Sets the DataFrame to covid_df for later calculations previously established.
 
 
     elif f"{str(facility_choice)}" in a:
         providers = covid_df.groupby("Federal Provider Number")
+        # Groups by the Federal Provider Number
         facility = providers.get_group(facility_choice)
+        # Creates DataFrame using Federal Provider Number Groups
         facility_mix = pd.DataFrame({f'{facility["Provider Name"].values}': range(len(facility))})
-
+        # Obtains the number for the index to be set
         facility.index = facility_mix.index
-
+        # Sets the index based on the amount obtained above.
         covid_df = facility
+        # Sets the DataFrame to covid_df for later calculations previously established.
 
     try:
         covid_simple_titles = covid_df.rename(columns= {
@@ -167,9 +186,6 @@ def read_panda_file_question_1():
     #Changes column names for easier calculations
     except:
         print("No simple titles")
-    print("Test for simple")
-
-
 
     user_choice = input("""Which Percentage information would you like? 
     A for 'Recent Percentage of Current Healthcare Personnel who Received a Completed COVID-19 Vaccination at Any Time' 
@@ -224,7 +240,10 @@ def read_panda_file_question_1():
         # Collects over 80 percent values for selection
         print(f"Week: {percent_a['W_End']} : Percent: {percent_a['Percentage_8']}")
     data = percent_a
+    # Prepares the data variable for saving to a file with the function call below.
+
     save_to_file(data)
+    # Calls the save_to_file function so that the information gathered for question one will be saved to a file.
 
 
 def read_panda_file_question_2():
@@ -260,7 +279,7 @@ def read_panda_file_question_2():
     # The above makes the column names manageable.
 
     max_count_list = []
-
+    # Creates an empty list for maximum counts for later use
     provider_list = []
     # Creates an empty list for providers for later use
     provider = ''
@@ -276,89 +295,147 @@ def read_panda_file_question_2():
         if provider == row:
             if counter < 1:
                 count += 1
+                # Used to iterate a count
             else:
                 count_list.append(count)
+                # Adds to the highest final count for each facility.
+
                 count = 0
+                # Resets the count.
 
         else:
-            if provider_list != [] and max_count != max(count_list): ###
+            if provider_list != [] and max_count != max(count_list):
                 print(f"Provider: {provider}, Weeks without Covid: {max(count_list)} ")
                 max_count = max(count_list)
+                # This helps identify the highest count at a facility
             provider = row
+            # This resets the provider so that it will iterate through the next facility
             provider_list.append(provider)
+            # This adds to the list of facilities
             max_count_list.append(max_count)
+            # This adds to the list of highest facility counts.
             count_list = [0]
+            # This resets the count list so that the current highest count won't inhibit the next count.
 
     data = [f"{provider_list}, {max_count_list}"]
+    # Prepares data variable for the save to file function using the information gathered from the provider_list and max_count_list variables.
+
     save_to_file(data)
+    # Uses the save to the "save_to_file" function created. Saves the file according to user preference.
 
 def read_panda_file_question_3():
+    """
+    No inputs are needed for this, it is chosen by by selecting the user choice.
+    :return:
+    Returns optional data for cleaning up data, or isolating some of the bad data
+    """
     bonus_df = pd.read_csv('bonus_challenge.csv', parse_dates= ["date_last_administered"])
-    #print(bonus_df)
-    no_nan = bonus_df.dropna
+    # Reads in the DataFrame for the Bonus question
 
     filled_nan = bonus_df.fillna(-1)
-    #print(filled_nan.index)
-    for i in range(len(filled_nan.iloc[0])):
-        #print(i)
-        pass
-    sorted_employees = filled_nan.sort_values(["employee_id"])
-    #print(sorted_employees)
+    # Replaces NaN values with -1
+
     no_dates = filled_nan["date_last_administered"] == -1
+    # gathers all of the data where no date was input
+
     medically_exempt = filled_nan["medically_exempt"] == 1
+    # gathers all of the data where someone was medically exempt
+
     refused = filled_nan["refused"] == 1
+    # gathers all of the data where someone refused
+
     xor_group_1 = filled_nan[no_dates^medically_exempt^refused]
+    # Attempt to isolate information
+
     pfizer_one = filled_nan["got_pfizer1"] == 1
     pfizer_two = filled_nan["got_pfizer2"] == 1
     pfizer_three = filled_nan["got_pfizer3"] == 1
-    pfizer_or_group = filled_nan[pfizer_one|pfizer_two|pfizer_three]
+    # The above 3 each identify where pfizer vaccines were administered
+
     moderna_one = filled_nan["got_moderna1"] == 1
     moderna_two = filled_nan["got_moderna2"] == 1
     moderna_three = filled_nan["got_moderna3"] == 1
-    moderna_or_group = filled_nan[moderna_one | moderna_two | moderna_three]
+    # The above 3 each identify where moderna vaccines were administered
+
     janssen_one = filled_nan["got_janssen1"] == 1
     janssen_two = filled_nan["got_janssen2"] == 1
-    janssen_or_group = filled_nan[janssen_one | janssen_two]
+    # The above 3 each identify where janssen vaccines were administered
+
     unknown_one = filled_nan["got_unknown1"] == 1
     unknown_two = filled_nan["got_unknown2"] == 1
     unknown_three = filled_nan["got_unknown3"] == 1
-    unknown_or_group = filled_nan[unknown_one | unknown_two | unknown_three]
+    # The above 3 each identify where unknown vaccines were administered
 
-    print(moderna_or_group)
-    #xor_group_2 = filled_nan[moderna_or_group ^ pfizer_or_group ^ janssen_or_group ^ unknown_or_group]
-    #This breaks it 
-    #print(xor_group_2)
+    xor_group_2 = filled_nan[(moderna_one|moderna_two|moderna_three)^(janssen_one|janssen_two)^(pfizer_one|pfizer_two|pfizer_three)^(unknown_one|unknown_two|unknown_three)^refused^medically_exempt]
+    # Used to verify that multiple types were not administered, count comes up as 99, suggests that there's only one in this category, probably same as xor_group_1
 
-    #print(filled_nan[no_dates])
-    print(xor_group_1)
+    sorted_employees = filled_nan.sort_values("employee_id")
+    # Sorts the Employee ID's in ascending order
+    sorted_dates = bonus_df.sort_values("date_last_administered")
+    # Sorts the dates where the vaccines were last administered
+    sorted_dates.reset_index(inplace=True)
+    # Creates a new index for the sorted dates
+    sorted_employees.reset_index(inplace=True)
+    # Creates a new index for the sorted employee ID's
+    user_choice = input("""
+    How would you like to see the data? 
+    1 for employee ID numbers sorted. 
+    2 for Dates sorted.
+    3 for unsorted with -1 for NaN
+    4 for no recorded information on employee """)
+    # Sets up User options
 
-    filled_nan["has_nans"] = "No"
-    #print(filled_nan.head(5))
-    def rows_with_nans(nan_spots):
-        if nan_spots in ["Filled"]:
-            return "yes"
-    nan_series = filled_nan["has_nans"].apply(rows_with_nans)
-    print(nan_series)
+    if user_choice == '1':
+        print(f"List of sorted Employee ID numbers: {sorted_employees}")
+        # Prints out with the employee IDs sorted in ascending order
+        data = [f"{sorted_employees}"]
+        # Prepares data variable for the save to file function using the information gathered from the sorted_employees variables.
+
+    elif user_choice == '2':
+        print(f"List of sorted dates: {sorted_dates}")
+        # Prints out with the Dates sorted in ascending order
+        data = [f"{sorted_dates}"]
+        # Prepares data variable for the save to file function using the information gathered from the sorted_dates variables.
+
+    elif user_choice == '3':
+        print(xor_group_2)
+        #Prints out all of the data, without anything sorted, but has the NaN's replaced.
+        data = [f"{xor_group_2}"]
+        # Prepares data variable for the save to file function using the information gathered from the xor_group_2 variables.
+
+    elif user_choice == '4':
+        print(xor_group_1)
+        # Isolates the one piece of illogical data (No information is really gathered from it)
 
 
-    #print(no_nan)
-    #nans = [bonus_df-no_nan]
-    #print(nans)
-    nan_date_list = []
-    """
-    for line, date in zip(bonus_df, bonus_df['date_last_administered']):
-        try:
-            if date == '1':
-                print(f"{line}This row lacks a date")
-                nan_date_list.append(line)
-        except:
-            if date < 1:
-                print(f"{line}This row lacks a date")
-                nan_date_list.append(line)
-    print(nan_date_list)
-    #print(nans)
-    """
+    save_to_file(data)
+    # Uses the save to the "save_to_file" function created. Saves the file according to user preference.
 
+def read_panda_file_question_4():
+    print("""Question 4 (Bonus question 2)
+    SELECT employee_id FROM dbo.bonus_challenge
+    WHERE (got_pfizer1 == 1 AND got_pfizer3== 1 ) OR (got_pfizer1 == 1 AND got_pfizer2== 1  AND got_pfizer3 == 1 )
+    OR (got_pfizer2 == 1 AND got_pfizer3 == 1 ) as 'fully_vaccinated_pfizer', # I included 2 and 3 because 2 in the timeline would be more beneficial then 1 anyway.
+    
+    (got_moderna1 ==1 AND got_moderna2 == 1) OR (got_moderna2 ==1 AND got_moderna3 == 1) # I included 2 and 3 because 3 in the timeline would be more beneficial then 1 anyway.
+    OR (got_moderna1 ==1 AND got_moderna3 == 1) # I included 1 and 3 because 3 in the timeline would be more beneficial then 2 anyway.
+    OR (got_moderna1 ==1 AND got_moderna2 == 1 AND got_moderna3 == 1) OR (got_unknown1 == 1 AND got_unknown2 == 1) as 'fully_vaccinated_moderna',
+    
+    OR (got_unknown1 == 1 AND got_unknown3 == 1) # I included 1 and 3 because 3 in the timeline would be more beneficial then 2 anyway.
+    OR (got_unknown2 == 1 AND got_unknown3 == 1) # I included 2 and 3 because 3 in the timeline would be more beneficial then 1 anyway.
+    OR (got_unknown1 == 1 AND got_unknown2 == 1 AND got_unknown3 == 1) as 'fully_vaccinated_unknown',
+    
+    OR (got_novavax1 == 1 AND got_novavax2 == 1) 
+    OR (got_novavax1 == 1 AND got_novavax3 == 1) # I included 1 and 3 because 3 in the timeline would be more beneficial then 2 anyway.
+    OR (got_novavax2 == 1 AND got_novavax3 == 1) # I included 2 and 3 because 3 in the timeline would be more beneficial then 1 anyway.
+    OR (got_novavax1 == 1 AND got_novavax2 == 1 AND got_novavax3 == 1) as 'fully_vaccinated_novavax',
+    
+    OR (got_Janssen1 == 1 AND got_Janssen2 == 1) 
+    OR (got_Janssen1 == 1 AND got_Janssen3 == 1) # I included 1 and 3 because 3 in the timeline would be more beneficial then 2 anyway.
+    OR (got_Janssen2 == 1 AND got_Janssen3 == 1) # I included 2 and 3 because 3 in the timeline would be more beneficial then 1 anyway.
+    OR (got_Janssen1 == 1 AND got_Janssen2 == 1 AND got_Janssen3 == 1) as 'janssen'
+    """)
+    # Haven't really looked at this for several months.
 def save_to_file(data):
     out_file_choice = input("What would you like to name the file? ")
     try:
@@ -375,6 +452,7 @@ def save_to_file(data):
             a new file name where you would like this saved, or view 
             the data now before it gets removed. 
             """)
+
 
 
 if __name__ == "__main__":
