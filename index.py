@@ -325,7 +325,7 @@ def read_panda_file_question_2():
 
 def read_panda_file_question_3():
     """
-    No inputs are needed for this, it is chosen by by selecting the user choice.
+    No inputs are needed for this, it is chosen by by selecting the user choice. Also known as bonus question 1.
     :return:
     Returns optional data for cleaning up data, or isolating some of the bad data
     """
