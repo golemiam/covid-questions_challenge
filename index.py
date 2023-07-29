@@ -1,10 +1,10 @@
 import csv
 import pandas as pd
 import requests
-import selenium
+#import selenium
 from bs4 import BeautifulSoup
-from selenium import webdriver
-from selenium.webdriver.support.ui import WebDriverWait as wait
+#from selenium import webdriver
+#from selenium.webdriver.support.ui import WebDriverWait as wait
 import numpy as np
 
 #from pandas_datareader import data
@@ -412,30 +412,34 @@ def read_panda_file_question_3():
     # Uses the save to the "save_to_file" function created. Saves the file according to user preference.
 
 def read_panda_file_question_4():
+    """
+    This function just prints out the SQL query needed to be included in a SQL query.
+    I imported the data from the excel spreadsheet named "bonus_challenge.xlsx" into a database
+    and named the database "Bonus", then into a sheet named "Sheet1$" (I left the name the same)
+    :return:
+    When you run the query it will create 4 different views with fully vaccinated employees.
+    1 view for each type of vaccination.
+    """
     print("""Question 4 (Bonus question 2)
-    SELECT employee_id FROM dbo.bonus_challenge
-    WHERE (got_pfizer1 == 1 AND got_pfizer3== 1 ) OR (got_pfizer1 == 1 AND got_pfizer2== 1  AND got_pfizer3 == 1 )
-    OR (got_pfizer2 == 1 AND got_pfizer3 == 1 ) as 'fully_vaccinated_pfizer', # I included 2 and 3 because 2 in the timeline would be more beneficial then 1 anyway.
     
-    (got_moderna1 ==1 AND got_moderna2 == 1) OR (got_moderna2 ==1 AND got_moderna3 == 1) # I included 2 and 3 because 3 in the timeline would be more beneficial then 1 anyway.
-    OR (got_moderna1 ==1 AND got_moderna3 == 1) # I included 1 and 3 because 3 in the timeline would be more beneficial then 2 anyway.
-    OR (got_moderna1 ==1 AND got_moderna2 == 1 AND got_moderna3 == 1) OR (got_unknown1 == 1 AND got_unknown2 == 1) as 'fully_vaccinated_moderna',
+
+  SELECT employee_id as 'Fully_vaccinated_pfizer' FROM [Bonus].[dbo].[Sheet1$]
+    WHERE got_pfizer1 = 1 AND got_pfizer3 = 1 OR got_pfizer1 = 1 AND got_pfizer2 = 1  AND got_pfizer3 = 1
+    OR got_pfizer2 = 1 AND got_pfizer3 = 1 /* I included 2 and 3 because 2 in the timeline would be more beneficial then 1 anyway.*/
     
-    OR (got_unknown1 == 1 AND got_unknown3 == 1) # I included 1 and 3 because 3 in the timeline would be more beneficial then 2 anyway.
-    OR (got_unknown2 == 1 AND got_unknown3 == 1) # I included 2 and 3 because 3 in the timeline would be more beneficial then 1 anyway.
-    OR (got_unknown1 == 1 AND got_unknown2 == 1 AND got_unknown3 == 1) as 'fully_vaccinated_unknown',
-    
-    OR (got_novavax1 == 1 AND got_novavax2 == 1) 
-    OR (got_novavax1 == 1 AND got_novavax3 == 1) # I included 1 and 3 because 3 in the timeline would be more beneficial then 2 anyway.
-    OR (got_novavax2 == 1 AND got_novavax3 == 1) # I included 2 and 3 because 3 in the timeline would be more beneficial then 1 anyway.
-    OR (got_novavax1 == 1 AND got_novavax2 == 1 AND got_novavax3 == 1) as 'fully_vaccinated_novavax',
-    
-    OR (got_Janssen1 == 1 AND got_Janssen2 == 1) 
-    OR (got_Janssen1 == 1 AND got_Janssen3 == 1) # I included 1 and 3 because 3 in the timeline would be more beneficial then 2 anyway.
-    OR (got_Janssen2 == 1 AND got_Janssen3 == 1) # I included 2 and 3 because 3 in the timeline would be more beneficial then 1 anyway.
-    OR (got_Janssen1 == 1 AND got_Janssen2 == 1 AND got_Janssen3 == 1) as 'janssen'
+  SELECT employee_id AS 'fully_vaccinated_moderna' FROM [Bonus].[dbo].[Sheet1$]
+    WHERE (got_moderna1 = 1 AND got_moderna2 = 1) OR (got_moderna2 = 1 AND got_moderna3 = 1) /* I included 2 and 3 because 3 in the timeline would be more beneficial then 1 anyway.*/
+    OR (got_moderna1 = 1 AND got_moderna3 = 1) /* I included 1 and 3 because 3 in the timeline would be more beneficial then 2 anyway.*/
+    OR (got_moderna1 = 1 AND got_moderna2 = 1 AND got_moderna3 = 1) OR (got_unknown1 = 1 AND got_unknown2 = 1);
+  SELECT employee_id AS 'fully_vaccinated_unknown' FROM [Bonus].[dbo].[Sheet1$]  
+    WHERE (got_unknown1 = 1 AND got_unknown3 = 1) /* I included 1 and 3 because 3 in the timeline would be more beneficial then 2 anyway. */
+    OR (got_unknown2 = 1 AND got_unknown3 = 1) /* I included 2 and 3 because 3 in the timeline would be more beneficial then 1 anyway.*/
+    OR (got_unknown1 = 1 AND got_unknown2 = 1 AND got_unknown3 = 1)
+  SELECT employee_id AS 'fully_vaccinated_Janssen' FROM [Bonus].[dbo].[Sheet1$]
+    WHERE (got_Janssen1 = 1 AND got_Janssen2 = 1) 
     """)
-    # Haven't really looked at this for several months.
+    # Input the above into SQL (See main doc string for this function)
+
 def save_to_file(data):
     out_file_choice = input("What would you like to name the file? ")
     try:
