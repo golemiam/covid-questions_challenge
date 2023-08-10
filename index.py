@@ -5,7 +5,7 @@ import selenium
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait as wait
-#from selenium,webdriver.common.by import By
+from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
 from turtle import Turtle
 
@@ -29,75 +29,72 @@ def run_project():
     :return:
     Returns the function chosen.
     """
-    #url_read_question_1()
-    #open_browser()
-    #opener()
+
+    fresh_data_input = input("Would you like a fresh set of data? 1 for yes, 2 for no. ")
+    # Obtains user input to determine if the site will pull up.
+    if fresh_data_input == "1":
+        # If the user chooses one, this will take them to the site. (open_browser below opens, print statement explains)
+        print("""
+        Export the data in the website and save it as 'COVID_19_Nursing_Home_Data_01_22_2023.csv' 
+        then respond to the program.
+        """)
+        open_browser()
+    else:
+        # If the user doesn't need fresh data the program continues
+        pass
+
     pd.set_option('display.max_columns', 22)
+    # This allows the user to see all 22 of the columns
     question_choice = input("Which question would you like to run? ")
+    # This allows the user to determine which challenge question that they want to look into.
 
     if question_choice == "1":
         read_panda_file_question_1()
+        # Looks at the first of the challenge questions provided.
     elif question_choice == "2":
         read_panda_file_question_2()
+        # Looks at the second of the challenge questions provided.
     elif question_choice == "3":
         read_panda_file_question_3()
+        # Looks at the first bonus question provided.
     elif question_choice == "4":
         read_panda_file_question_4()
+        # Looks at the second bonus question.
 
     draw_something(question_choice)
+    # references draw_something function below. Draws based on question. something for fun.
 
 
-def opener():
-    # the target we want to open
-    url = "https://data.cms.gov"
 
-    # open with GET method
-    resp = requests.get(url)
-
-    # http_respone 200 means OK status
-    if resp.status_code == 200:
-        print("Successfully opened the web page")
-        print("The news are as follow :-\n")
-
-        # we need a parser,Python built-in HTML parser is enough .
-        soup = BeautifulSoup(resp.text, 'html.parser')
-
-        # l is the list which contains all the text i.e news
-        l = soup.find("a", {"class": "HomepageMostViewedDatasets__button btn btn-primary"})
-        print(l)
-        # now we want to print only the text part of the anchor.
-        # find all the elements of a, i.e anchor
-        for i in l.findAll("a"):
-            print(i.text)
-    else:
-        print("Error")
 def open_browser():
-    #driver = webdriver.Chrome(ChromeDriverManager().install())
-    driver = webdriver.Chrome(r"C:/Users/Golem/Downloads/chromedriver_win32/chromedriver")
-    url = "https://data.cms.gov/covid-19/covid-19-nursing-home-data/data?query=%7B%22filters%22%3A%7B%22rootConjunction%22%3A%7B%22label%22%3A%22And%22%2C%22value%22%3A%22AND%22%7D%2C%22list%22%3A%5B%5D%7D%2C%22keywords%22%3A%22%22%2C%22offset%22%3A0%2C%22limit%22%3A10%2C%22sort%22%3A%7B%22sortBy%22%3Anull%2C%22sortOrder%22%3Anull%7D%2C%22columns%22%3A%5B%22week_ending%22%2C%22federal_provider_number%22%2C%22provider_name%22%2C%22provider_city%22%2C%22provider_state%22%2C%22provider_zip_code%22%2C%22provider_phone_number%22%2C%22residents_weekly_confirmed_covid_19%22%2C%22number_of_all_healthcare_personnel_eligible_to_work_in_this_facility_for_at_least_1_day_this_week_who_received_a_completed_covid_19_vaccination_at_any_time%22%2C%22recent_percentage_of_current_healthcare_personnel_who_received_a_completed_covid_19_vaccination_at_any_time%22%2C%22percentage_of_current_healthcare_personnel_who_received_a_completed_covid_19_vaccination_at_any_time%22%2C%22percentage_of_current_healthcare_personnel_with_a_completed_vaccination_who_received_a_covid_19_vaccine_booster_at_any_time%22%2C%22Recent_Percentage_of_Current_Healthcare_Personnel_Up_to_Date_with_COVID_19_Vaccines%22%2C%22Percentage_of_Current_Healthcare_Personnel_Up_to_Date_with_COVID_19_Vaccines%22%5D%7D"
+    """
+    Used to open the website.
+    :return: Opens either the chrome or the firefox browser depending on the users choice.
+    """
+    inter_choice = input("Chrome or firefox. 1 for Chrome, 2 for firefox ")
+    # Sets up choice for user to determine browser option.
+    if inter_choice == "1":
+        driver = webdriver.Chrome()
+        driver.get(
+        "https://data.cms.gov/covid-19/covid-19-nursing-home-data/data?query=%7B%22filters%22%3A%7B%22rootConjunction%22%3A%7B%22label%22%3A%22And%22%2C%22value%22%3A%22AND%22%7D%2C%22list%22%3A%5B%5D%7D%2C%22keywords%22%3A%22%22%2C%22offset%22%3A0%2C%22limit%22%3A10%2C%22sort%22%3A%7B%22sortBy%22%3Anull%2C%22sortOrder%22%3Anull%7D%2C%22columns%22%3A%5B%22week_ending%22%2C%22federal_provider_number%22%2C%22provider_name%22%2C%22provider_city%22%2C%22provider_state%22%2C%22provider_zip_code%22%2C%22provider_phone_number%22%2C%22residents_weekly_confirmed_covid_19%22%2C%22number_of_all_healthcare_personnel_eligible_to_work_in_this_facility_for_at_least_1_day_this_week_who_received_a_completed_covid_19_vaccination_at_any_time%22%2C%22recent_percentage_of_current_healthcare_personnel_who_received_a_completed_covid_19_vaccination_at_any_time%22%2C%22percentage_of_current_healthcare_personnel_who_received_a_completed_covid_19_vaccination_at_any_time%22%2C%22percentage_of_current_healthcare_personnel_with_a_completed_vaccination_who_received_a_covid_19_vaccine_booster_at_any_time%22%2C%22Recent_Percentage_of_Current_Healthcare_Personnel_Up_to_Date_with_COVID_19_Vaccines%22%2C%22Percentage_of_Current_Healthcare_Personnel_Up_to_Date_with_COVID_19_Vaccines%22%5D%7D")  # put here the adress of your page
+        # Opens chrome browser.
 
+    if inter_choice == "2":
+        driver = webdriver.Firefox()
+        driver.get(
+        "https://data.cms.gov/covid-19/covid-19-nursing-home-data/data?query=%7B%22filters%22%3A%7B%22rootConjunction%22%3A%7B%22label%22%3A%22And%22%2C%22value%22%3A%22AND%22%7D%2C%22list%22%3A%5B%5D%7D%2C%22keywords%22%3A%22%22%2C%22offset%22%3A0%2C%22limit%22%3A10%2C%22sort%22%3A%7B%22sortBy%22%3Anull%2C%22sortOrder%22%3Anull%7D%2C%22columns%22%3A%5B%22week_ending%22%2C%22federal_provider_number%22%2C%22provider_name%22%2C%22provider_city%22%2C%22provider_state%22%2C%22provider_zip_code%22%2C%22provider_phone_number%22%2C%22residents_weekly_confirmed_covid_19%22%2C%22number_of_all_healthcare_personnel_eligible_to_work_in_this_facility_for_at_least_1_day_this_week_who_received_a_completed_covid_19_vaccination_at_any_time%22%2C%22recent_percentage_of_current_healthcare_personnel_who_received_a_completed_covid_19_vaccination_at_any_time%22%2C%22percentage_of_current_healthcare_personnel_who_received_a_completed_covid_19_vaccination_at_any_time%22%2C%22percentage_of_current_healthcare_personnel_with_a_completed_vaccination_who_received_a_covid_19_vaccine_booster_at_any_time%22%2C%22Recent_Percentage_of_Current_Healthcare_Personnel_Up_to_Date_with_COVID_19_Vaccines%22%2C%22Percentage_of_Current_Healthcare_Personnel_Up_to_Date_with_COVID_19_Vaccines%22%5D%7D")  # put here the adress of your page
+        # Opens firefox browser.
+
+    url = "https://data.cms.gov/covid-19/covid-19-nursing-home-data/data?query=%7B%22filters%22%3A%7B%22rootConjunction%22%3A%7B%22label%22%3A%22And%22%2C%22value%22%3A%22AND%22%7D%2C%22list%22%3A%5B%5D%7D%2C%22keywords%22%3A%22%22%2C%22offset%22%3A0%2C%22limit%22%3A10%2C%22sort%22%3A%7B%22sortBy%22%3Anull%2C%22sortOrder%22%3Anull%7D%2C%22columns%22%3A%5B%22week_ending%22%2C%22federal_provider_number%22%2C%22provider_name%22%2C%22provider_city%22%2C%22provider_state%22%2C%22provider_zip_code%22%2C%22provider_phone_number%22%2C%22residents_weekly_confirmed_covid_19%22%2C%22number_of_all_healthcare_personnel_eligible_to_work_in_this_facility_for_at_least_1_day_this_week_who_received_a_completed_covid_19_vaccination_at_any_time%22%2C%22recent_percentage_of_current_healthcare_personnel_who_received_a_completed_covid_19_vaccination_at_any_time%22%2C%22percentage_of_current_healthcare_personnel_who_received_a_completed_covid_19_vaccination_at_any_time%22%2C%22percentage_of_current_healthcare_personnel_with_a_completed_vaccination_who_received_a_covid_19_vaccine_booster_at_any_time%22%2C%22Recent_Percentage_of_Current_Healthcare_Personnel_Up_to_Date_with_COVID_19_Vaccines%22%2C%22Percentage_of_Current_Healthcare_Personnel_Up_to_Date_with_COVID_19_Vaccines%22%5D%7D"
+    # Creates variable for later use.
     driver.get(url)
-    driver.find_element_by_link_text('export_btn_text').click()
-    text_field = driver.find_element_by_link_text('export_btn_text')
-    text = wait(driver, 10).until(lambda driver: not text_field.text == 'Export' and text_field.text)
-    return text
-
-    print(open_browser())
-
-def url_read_question_1():
-    url = "https://data.cms.gov/covid-19/covid-19-nursing-home-data/data?query=%7B%22filters%22%3A%7B%22rootConjunction%22%3A%7B%22label%22%3A%22And%22%2C%22value%22%3A%22AND%22%7D%2C%22list%22%3A%5B%5D%7D%2C%22keywords%22%3A%22%22%2C%22offset%22%3A0%2C%22limit%22%3A10%2C%22sort%22%3A%7B%22sortBy%22%3Anull%2C%22sortOrder%22%3Anull%7D%2C%22columns%22%3A%5B%22week_ending%22%2C%22federal_provider_number%22%2C%22provider_name%22%2C%22provider_city%22%2C%22provider_state%22%2C%22provider_zip_code%22%2C%22provider_phone_number%22%2C%22residents_weekly_confirmed_covid_19%22%2C%22number_of_all_healthcare_personnel_eligible_to_work_in_this_facility_for_at_least_1_day_this_week_who_received_a_completed_covid_19_vaccination_at_any_time%22%2C%22recent_percentage_of_current_healthcare_personnel_who_received_a_completed_covid_19_vaccination_at_any_time%22%2C%22percentage_of_current_healthcare_personnel_who_received_a_completed_covid_19_vaccination_at_any_time%22%2C%22percentage_of_current_healthcare_personnel_with_a_completed_vaccination_who_received_a_covid_19_vaccine_booster_at_any_time%22%2C%22Recent_Percentage_of_Current_Healthcare_Personnel_Up_to_Date_with_COVID_19_Vaccines%22%2C%22Percentage_of_Current_Healthcare_Personnel_Up_to_Date_with_COVID_19_Vaccines%22%5D%7D"
-    site = requests.get(url)
-    response = requests.get(f"{url}/Export")
-    print(site.json)
-    print(site.elapsed)
-    print(site.iter_content)
-    print(site.headers)
-    print(site.content)
-    for i in range(len(site.__dir__())):
-        print(site.__dir__()[i])
-    print(site.url)
-
-    #print(response.text)
+    # Gets the driver for the URL
+    driver.implicitly_wait(20)
+    # Tells the browser to stay open for a little bit.
+    element = driver.find_element(By.CLASS_NAME, "open_export_btn")
+    # To gather button
+    driver.execute_script("arguments[0].click();", element)
+    # To click on button
 
 
 def read_panda_file_question_1():
@@ -136,6 +133,7 @@ def read_panda_file_question_1():
 
     except:
         print("That doesn't quite work")
+        # Lets the user know that their option doesn't work
 
     if facility_choice == '1'.lower():
         pass
@@ -456,13 +454,18 @@ def save_to_file(data):
     :return: Saves the file to the name given by the user.
     """
     out_file_choice = input("What would you like to name the file? ")
+    # Allows the user to name the file.
     try:
         with open(out_file_choice, "x") as out_file:
+            # Checks for file name duplicate
             print(data, file= out_file)
+            # Saves the file
     except:
         out_file_placer = "placer.txt"
+        # creates a variable for the duplicates new location to avoid saving over another file.
         with open(out_file_placer, "w") as out_file:
             print(data, file= out_file)
+            # Saves the file to the placer.txt
             print("""
                 You chose a file name that has already been taken, 
             your data has been placed in placer.txt and will be 
@@ -470,6 +473,8 @@ def save_to_file(data):
             a new file name where you would like this saved, or view 
             the data now before it gets removed. 
             """)
+            # Describes to the user regarding the duplicate file name.
+
 def draw_something(question_choice):
     """
     Draws something for each of the questions, used to add a little flair.
@@ -477,6 +482,7 @@ def draw_something(question_choice):
     :return: Draws something (Multiple options)
     """
     t = Turtle()
+    # Creates a variable for the turtle drawing module.
 
     def draw_small_circle():
         """
@@ -484,8 +490,11 @@ def draw_something(question_choice):
         :return: Draws a small hard set circle
         """
         t.down()
+        # Puts the "pen down" which makes it start drawing at whatever position the "pen" is.
         t.circle(50, 360, 20)
+        # Draws a circle with a 50 pixel radius.
         t.up()
+        # lifts "the pen up" to stop drawing at the point where it is.
 
     def draw_oval():
         """
@@ -493,13 +502,18 @@ def draw_something(question_choice):
         :return: Draws an Oval
         """
         t.setheading(45)
+        # Tells the pen the direction to face when it starts drawing.
         t.down()
+        # Puts the "pen down" which makes it start drawing at whatever position the "pen" is.
 
         for i in range(2):
-
+            # Sets up iteration (to iterate twice)
             t.circle(110, 90)
+            # Draws a quarter circle with larger radius
             t.circle(110//2, 90)
+            #Draws a quarter circle with smaller radius
         t.up()
+        # lifts "the pen up" to stop drawing at the point where it is.
 
     def draw_plus(x, y):
         """
@@ -510,14 +524,23 @@ def draw_something(question_choice):
         :return: Draws a plus sign
         """
         t.goto(x, y)
+        # Moves "the pen" to the coordinate x,y
         t.down()
+        # Puts the "pen down" which makes it start drawing at whatever position the "pen" is.
         t.setheading(90)
+        # Tells the pen the direction to face when it starts drawing.
         t.forward(100)
+        # Draws a straight line.
         t.up()
+        # lifts "the pen up" to stop drawing at the point where it is.
         t.goto(x-50, y+50)
+        # Moves "the pen" to the coordinate x,y using adjustments
         t.setheading(0)
+        # Tells the pen the direction to face when it starts drawing.
         t.down()
+        # Puts the "pen down" which makes it start drawing at whatever position the "pen" is.
         t.forward(100)
+        # Draws a straight line.
 
     def draw_line(x, y, length, direction):
         """
@@ -529,11 +552,17 @@ def draw_something(question_choice):
         :return: Draws a line
         """
         t.up()
+        # lifts "the pen up" to stop drawing at the point where it is.
         t.goto(x,y)
+        # Moves "the pen" to the coordinate x,y
         t.setheading(direction)
+        # Tells the pen the direction to face when it starts drawing.
         t.down()
+        # Puts the "pen down" which makes it start drawing at whatever position the "pen" is.
         t.forward(length)
+        # Draws a straight line. The "length" gives the length of the line.
         t.up()
+        # lifts "the pen up" to stop drawing at the point where it is.
 
     def draw_variable_circle(x, y, tilt=None, radius=None, extent=None, steps=None):
         """
@@ -547,13 +576,19 @@ def draw_something(question_choice):
         :return: Returns a drawing of a black circle.
         """
         t.up()
+        # lifts "the pen up" to stop drawing at the point where it is.
         if x != "0" or y != "0":
             t.goto(x,y)
+            # Moves "the pen" to the coordinate x,y
         if tilt != "0":
             t.setheading(tilt)
+            # Tells the pen the direction to face when it starts drawing. (tilt gives the direction)
         t.down()
+        # Puts the "pen down" which makes it start drawing at whatever position the "pen" is.
         t.circle(radius, extent, steps)
+        # Draws a circle with variables assigned
         t.up()
+        # lifts "the pen up" to stop drawing at the point where it is.
 
 
 
@@ -561,13 +596,18 @@ def draw_something(question_choice):
         # Draws 80+ to indicate the 80% and above.
 
         t.up()
+        # lifts "the pen up" to stop drawing at the point where it is.
         t.goto(-80, 80)
+        # Moves "the pen" to the coordinate x,y
         draw_small_circle()
+        # Draws a small circle
         t.goto(-80, -20)
+        # Moves "the pen" to the coordinate x,y
         draw_small_circle()
         # The above lines draw the 8
 
         t.goto(80, -10)
+        # Moves "the pen" to the coordinate x,y
         draw_oval()
         # Draws the zero
 
