@@ -1,12 +1,27 @@
 import csv
 import pandas as pd
 import requests
-import selenium
+try:
+    import selenium
+except:
+    print("Selenium Module not importing")
 from bs4 import BeautifulSoup
-from selenium import webdriver
-from selenium.webdriver.support.ui import WebDriverWait as wait
-from selenium.webdriver.common.by import By
-from webdriver_manager.chrome import ChromeDriverManager
+try:
+    from selenium import webdriver
+except:
+    print("selenium webdriver not importing")
+try:
+    from selenium.webdriver.support.ui import WebDriverWait as wait
+except:
+    print("selenium webdriver 'wait' not importing")
+try:
+    from selenium.webdriver.common.by import By
+except:
+    print("'selenium webdriver common by' not importing")
+try:
+    from webdriver_manager.chrome import ChromeDriverManager
+except:
+    print("'from webdriver_manager.chrome import ChromeDriverManager' not importing")
 from turtle import Turtle
 
 import numpy as np
@@ -22,6 +37,8 @@ def main():
     Returns values based on user input
     """
 
+
+
     run_project()
 def run_project():
     """
@@ -29,6 +46,8 @@ def run_project():
     :return:
     Returns the function chosen.
     """
+    #opener()
+    #url_read_question_1()
 
     fresh_data_input = input("Would you like a fresh set of data? 1 for yes, 2 for no. ")
     # Obtains user input to determine if the site will pull up.
@@ -38,14 +57,18 @@ def run_project():
         Export the data in the website and save it as 'COVID_19_Nursing_Home_Data_01_22_2023.csv' 
         then respond to the program.
         """)
-        open_browser()
+        try:
+            #open_browser()
+            opener()
+        except:
+            print("the browser will not open at this time")
     else:
         # If the user doesn't need fresh data the program continues
         pass
 
     pd.set_option('display.max_columns', 22)
     # This allows the user to see all 22 of the columns
-    question_choice = input("Which question would you like to run? ")
+    question_choice = input("Which question would you like to run? 1, 2, 3 or 4")
     # This allows the user to determine which challenge question that they want to look into.
 
     if question_choice == "1":
@@ -60,11 +83,76 @@ def run_project():
     elif question_choice == "4":
         read_panda_file_question_4()
         # Looks at the second bonus question.
+    else:
+        print("run the program again but be sure to follow directions.")
 
     draw_something(question_choice)
     # references draw_something function below. Draws based on question. something for fun.
 
 
+def opener():
+    # the target we want to open
+    url = "https://data.cms.gov/data-api/v1/dataset/60ccbf1c-d3f5-4354-86a3-465711d81c5a/data"
+    # Test URL
+    #url = "https://data.cms.gov/data-api/v1/dataset/60ccbf1c-d3f5-4354-86a3-465711d81c5a/data.csv?column=string&_source=https%3A%2F%2Fdata.cms.gov%2Fquality-of-care%2Fpayroll-based-journal-daily-nurse-staffing%2Fdata%3Fquery%3D%257B%2522filters%2522%253A%257B%2522rootConjunction%2522%253A%257B%2522label%2522%253A%2522And%2522%252C%2522value%2522%253A%2522AND%2522%257D%252C%2522list%2522%253A%255B%255D%257D%252C%2522keywords%2522%253A%2522%2522%252C%2522offset%2522%253A0%252C%2522limit%2522%253A10%252C%2522sort%2522%253A%257B%2522sortBy%2522%253Anull%252C%2522sortOrder%2522%253Anull%257D%252C%2522columns%2522%253A%255B%2522PROVNUM%2522%252C%2522PROVNAME%2522%252C%2522CITY%2522%252C%2522STATE%2522%252C%2522COUNTY_NAME%2522%252C%2522COUNTY_FIPS%2522%252C%2522WorkDate%2522%252C%2522MDScensus%2522%252C%2522Hrs_RNDON%2522%252C%2522Hrs_RNDON_emp%2522%252C%2522Hrs_RNDON_ctr%2522%252C%2522Hrs_RNadmin%2522%252C%2522Hrs_RNadmin_emp%2522%252C%2522Hrs_RNadmin_ctr%2522%252C%2522Hrs_RN%2522%252C%2522Hrs_RN_emp%2522%252C%2522Hrs_RN_ctr%2522%252C%2522Hrs_LPNadmin%2522%252C%2522Hrs_LPNadmin_emp%2522%252C%2522Hrs_LPNadmin_ctr%2522%252C%2522Hrs_LPN%2522%252C%2522Hrs_LPN_emp%2522%252C%2522Hrs_LPN_ctr%2522%252C%2522Hrs_CNA%2522%252C%2522Hrs_CNA_emp%2522%252C%2522Hrs_CNA_ctr%2522%252C%2522Hrs_NAtrn%2522%252C%2522Hrs_NAtrn_emp%2522%252C%2522Hrs_NAtrn_ctr%2522%252C%2522Hrs_MedAide%2522%252C%2522Hrs_MedAide_emp%2522%252C%2522Hrs_MedAide_ctr%2522%255D%257D"
+    # CSV URL
+    #url = "https://data.cms.gov/data-api/v1/dataset/60ccbf1c-d3f5-4354-86a3-465711d81c5a/data.json?column=string&_source=https%3A%2F%2Fdata.cms.gov%2Fquality-of-care%2Fpayroll-based-journal-daily-nurse-staffing%2Fdata%3Fquery%3D%257B%2522filters%2522%253A%257B%2522rootConjunction%2522%253A%257B%2522label%2522%253A%2522And%2522%252C%2522value%2522%253A%2522AND%2522%257D%252C%2522list%2522%253A%255B%255D%257D%252C%2522keywords%2522%253A%2522%2522%252C%2522offset%2522%253A0%252C%2522limit%2522%253A10%252C%2522sort%2522%253A%257B%2522sortBy%2522%253Anull%252C%2522sortOrder%2522%253Anull%257D%252C%2522columns%2522%253A%255B%2522PROVNUM%2522%252C%2522PROVNAME%2522%252C%2522CITY%2522%252C%2522STATE%2522%252C%2522COUNTY_NAME%2522%252C%2522COUNTY_FIPS%2522%252C%2522WorkDate%2522%252C%2522MDScensus%2522%252C%2522Hrs_RNDON%2522%252C%2522Hrs_RNDON_emp%2522%252C%2522Hrs_RNDON_ctr%2522%252C%2522Hrs_RNadmin%2522%252C%2522Hrs_RNadmin_emp%2522%252C%2522Hrs_RNadmin_ctr%2522%252C%2522Hrs_RN%2522%252C%2522Hrs_RN_emp%2522%252C%2522Hrs_RN_ctr%2522%252C%2522Hrs_LPNadmin%2522%252C%2522Hrs_LPNadmin_emp%2522%252C%2522Hrs_LPNadmin_ctr%2522%252C%2522Hrs_LPN%2522%252C%2522Hrs_LPN_emp%2522%252C%2522Hrs_LPN_ctr%2522%252C%2522Hrs_CNA%2522%252C%2522Hrs_CNA_emp%2522%252C%2522Hrs_CNA_ctr%2522%252C%2522Hrs_NAtrn%2522%252C%2522Hrs_NAtrn_emp%2522%252C%2522Hrs_NAtrn_ctr%2522%252C%2522Hrs_MedAide%2522%252C%2522Hrs_MedAide_emp%2522%252C%2522Hrs_MedAide_ctr%2522%255D%257D"
+    url = "https://data.cms.gov/data-api/v1/dataset/7e0d53ba-8f02-4c66-98a5-14a1c997c50d/data?offset=0&size=10&_source=https%3A%2F%2Fdata.cms.gov%2Fdata-api%2Fv1%2Fdataset%2F7e0d53ba-8f02-4c66-98a5-14a1c997c50d%2Fdata"
+    url_2 = "https://data.cms.gov/data-api/v1/dataset/137f90cb-ac53-4b3d-8358-e65cf64e03d3/data"
+    # open with GET method
+    resp = requests.get(url)
+    resp_2 = requests.get(url_2)
+    print(resp)
+    print(resp_2)
+
+
+    # http_respone 200 means OK status
+    if resp.status_code == 200:
+        print("Successfully opened the web page")
+        print(resp.json())
+        print("Test")
+        print(resp_2.json())
+        print("Test 2")
+        print(resp.json()[0:2])
+        print("The news are as follow :-\n")
+        print(resp_2.json()[0:4])
+
+        covid_data = resp_2.json()
+
+        # we need a parser,Python built-in HTML parser is enough .
+        soup = BeautifulSoup(resp.text, 'html.parser')
+
+        # l is the list which contains all the text i.e news
+        l = soup.find("a", {"class": "HomepageMostViewedDatasets__button btn btn-primary"})
+        print(l)
+        # now we want to print only the text part of the anchor.
+        # find all the elements of a, i.e anchor
+        for i in l.findAll("a"):
+            print(i.text)
+    else:
+        print("Error")
+
+def url_read_question_1():
+    url = "https://data.cms.gov/covid-19/covid-19-nursing-home-data/data?query=%7B%22filters%22%3A%7B%22rootConjunction%22%3A%7B%22label%22%3A%22And%22%2C%22value%22%3A%22AND%22%7D%2C%22list%22%3A%5B%5D%7D%2C%22keywords%22%3A%22%22%2C%22offset%22%3A0%2C%22limit%22%3A10%2C%22sort%22%3A%7B%22sortBy%22%3Anull%2C%22sortOrder%22%3Anull%7D%2C%22columns%22%3A%5B%22week_ending%22%2C%22federal_provider_number%22%2C%22provider_name%22%2C%22provider_city%22%2C%22provider_state%22%2C%22provider_zip_code%22%2C%22provider_phone_number%22%2C%22residents_weekly_confirmed_covid_19%22%2C%22number_of_all_healthcare_personnel_eligible_to_work_in_this_facility_for_at_least_1_day_this_week_who_received_a_completed_covid_19_vaccination_at_any_time%22%2C%22recent_percentage_of_current_healthcare_personnel_who_received_a_completed_covid_19_vaccination_at_any_time%22%2C%22percentage_of_current_healthcare_personnel_who_received_a_completed_covid_19_vaccination_at_any_time%22%2C%22percentage_of_current_healthcare_personnel_with_a_completed_vaccination_who_received_a_covid_19_vaccine_booster_at_any_time%22%2C%22Recent_Percentage_of_Current_Healthcare_Personnel_Up_to_Date_with_COVID_19_Vaccines%22%2C%22Percentage_of_Current_Healthcare_Personnel_Up_to_Date_with_COVID_19_Vaccines%22%5D%7D"
+    url = "https://data.cms.gov/data-api/v1/dataset/{{data?query=%7B%22filters%22%3A%7B%22rootConjunction%22%3A%7B%22label%22%3A%22And%22%2C%22value%22%3A%22AND%22%7D%2C%22list%22%3A%5B%5D%7D%2C%22keywords%22%3A%22%22%2C%22offset%22%3A0%2C%22limit%22%3A10%2C%22sort%22%3A%7B%22sortBy%22%3Anull%2C%22sortOrder%22%3Anull%7D%2C%22columns%22%3A%5B%22week_ending%22%2C%22federal_provider_number%22%2C%22provider_name%22%2C%22provider_city%22%2C%22provider_state%22%2C%22provider_zip_code%22%2C%22provider_phone_number%22%2C%22residents_weekly_confirmed_covid_19%22%2C%22number_of_all_healthcare_personnel_eligible_to_work_in_this_facility_for_at_least_1_day_this_week_who_received_a_completed_covid_19_vaccination_at_any_time%22%2C%22recent_percentage_of_current_healthcare_personnel_who_received_a_completed_covid_19_vaccination_at_any_time%22%2C%22percentage_of_current_healthcare_personnel_who_received_a_completed_covid_19_vaccination_at_any_time%22%2C%22percentage_of_current_healthcare_personnel_with_a_completed_vaccination_who_received_a_covid_19_vaccine_booster_at_any_time%22%2C%22Recent_Percentage_of_Current_Healthcare_Personnel_Up_to_Date_with_COVID_19_Vaccines%22%2C%22Percentage_of_Current_Healthcare_Personnel_Up_to_Date_with_COVID_19_Vaccines%22%5D%7D}}/data"
+    # Doesn't create a data set
+    url = "https://data.cms.gov/data-api/v1/dataset/60ccbf1c-d3f5-4354-86a3-465711d81c5a/data.csv?column=Week%20Ending&column=Federal%20Provider%20Number&column=Provider%20Name&column=Provider%20City&column=Provider%20State&column=Provider%20Zip%20Code&column=Provider%20Phone%20Number&column=Residents%20Weekly%20Confirmed%20COVID-19&column=Number%20of%20All%20Healthcare%20Personnel%20Eligible%20to%20Work%20in%20this%20Facility%20for%20At%20Least%201%20Day%20This%20Week%20who%20Received%20a%20Completed%20COVID-19%20Vaccination%20at%20Any%20Time&column=Recent%20Percentage%20of%20Current%20Healthcare%20Personnel%20who%20Received%20a%20Completed%20COVID-19%20Vaccination%20at%20Any%20Time&column=Percentage%20of%20Current%20Healthcare%20Personnel%20who%20Received%20a%20Completed%20COVID-19%20Vaccination%20at%20Any%20Time&column=Percentage%20of%20Current%20Healthcare%20Personnel%20with%20No%20Medical%20Contraindications%20who%20Received%20a%20Completed%20COVID-19%20Vaccination%20at%20Any%20Time&column=Number%20of%20Healthcare%20Personnel%20with%20a%20Completed%20Vaccination%20Eligible%20to%20Work%20in%20this%20Facility%20for%20At%20Least%201%20Day%20This%20Week%20who%20Received%20a%20COVID-19%20Vaccine%20Booster%20at%20Any%20Time&column=Recent%20Percentage%20of%20Current%20Healthcare%20Personnel%20with%20a%20Completed%20Vaccination%20who%20Received%20a%20COVID-19%20Vaccine%20Booster%20at%20Any%20Time&column=Percentage%20of%20Current%20Healthcare%20Personnel%20with%20a%20Completed%20Vaccination%20who%20Received%20a%20COVID-19%20Vaccine%20Booster%20at%20Any%20Time&column=Recent%20Percentage%20of%20Current%20Healthcare%20Personnel%20Up%20to%20Date%20with%20COVID-19%20Vaccines&column=Percentage%20of%20Current%20Healthcare%20Personnel%20Up%20to%20Date%20with%20COVID-19%20Vaccines&column=Percentage%20of%20Current%20Healthcare%20Personnel%20with%20a%20Completed%20Vaccination%20Up%20to%20Date%20with%20COVID-19%20Vaccines"
+    # Provides a large data set, but appears to be different data, creates csv though
+    site = requests.get(url)
+    response = requests.get(f"{url}/Export")
+    print(site.json)
+    print(site.elapsed)
+    print(site.iter_content)
+    print(site.headers)
+    print(site.content)
+    for i in range(len(site.__dir__())):
+        #print(site.__dir__()[i])
+        pass
+    print(site.url)
+    print(site.__iter__)
+    print(response)
+
+    #print(response.text)
 
 def open_browser():
     """
