@@ -1,11 +1,23 @@
-import csv
-import pandas as pd
-import requests
+try:
+    import csv
+except:
+    print('csv not importing')
+try:
+    import pandas as pd
+except:
+    print("pandas not importing")
+try:
+    import requests
+except:
+    print("requests not importing")
 try:
     import selenium
 except:
     print("Selenium Module not importing")
-from bs4 import BeautifulSoup
+try:
+    from bs4 import BeautifulSoup1
+except:
+    print("bs4 didn't import")
 try:
     from selenium import webdriver
 except:
